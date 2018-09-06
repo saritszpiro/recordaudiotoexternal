@@ -25,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = "AudioRecording";
     private static String mFileName = null;
     public static final int REQUEST_AUDIO_PERMISSION_CODE = 1;
+    boolean isRecording = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -137,6 +139,46 @@ public class MainActivity extends AppCompatActivity {
     }
     private void RequestPermissions() {
         ActivityCompat.requestPermissions(MainActivity.this, new String[]{RECORD_AUDIO, WRITE_EXTERNAL_STORAGE}, REQUEST_AUDIO_PERMISSION_CODE);
+    }
+
+
+    public void startRecording(View view){
+        if(CheckPermissions()) {
+            if (!isRecording) {
+
+                stopbtn.setEnabled(true);
+                startbtn.setEnabled(false);
+                playbtn.setEnabled(false);
+                stopplay.setEnabled(false);
+                mRecorder = new MediaRecorder();
+                mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+                mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+                mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+                mRecorder.setOutputFile(mFileName);
+                Toast.makeText(MainActivity.this, mFileName.toString(), Toast.LENGTH_SHORT).show();
+                try {
+                    mRecorder.prepare();
+                } catch (IOException e) {
+                    Log.e(LOG_TAG, "prepare() failed");
+                }
+                mRecorder.start();
+                isRecording = true;
+                Toast.makeText(getApplicationContext(), "Recording Started", Toast.LENGTH_LONG).show();
+            } else if (isRecording) {
+                Toast.makeText(MainActivity.this, "Stopped recording", Toast.LENGTH_SHORT).show();
+                stopbtn.setEnabled(false);
+                startbtn.setEnabled(true);
+                playbtn.setEnabled(true);
+                stopplay.setEnabled(true);
+                mRecorder.stop();
+                mRecorder.release();
+                mRecorder = null;
+                Toast.makeText(getApplicationContext(), "Recording Stopped", Toast.LENGTH_LONG).show();
+            }
+        }
+        else {
+                RequestPermissions();
+        }
     }
 }
 
