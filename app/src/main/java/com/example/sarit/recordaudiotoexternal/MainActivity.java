@@ -44,47 +44,6 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(MainActivity.this,mFileName.toString(),Toast.LENGTH_SHORT).show();
         mFileName += "/AudioRecording.3gp";
 
-        startbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(CheckPermissions()) {
-                    stopbtn.setEnabled(true);
-                    startbtn.setEnabled(false);
-                    playbtn.setEnabled(false);
-                    stopplay.setEnabled(false);
-                    mRecorder = new MediaRecorder();
-                    mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-                    mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-                    mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-                    mRecorder.setOutputFile(mFileName);
-                    Toast.makeText(MainActivity.this,mFileName.toString(),Toast.LENGTH_SHORT).show();
-                    try {
-                        mRecorder.prepare();
-                    } catch (IOException e) {
-                        Log.e(LOG_TAG, "prepare() failed");
-                    }
-                    mRecorder.start();
-                    Toast.makeText(getApplicationContext(), "Recording Started", Toast.LENGTH_LONG).show();
-                }
-                else
-                {
-                    RequestPermissions();
-                }
-            }
-        });
-        stopbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                stopbtn.setEnabled(false);
-                startbtn.setEnabled(true);
-                playbtn.setEnabled(true);
-                stopplay.setEnabled(true);
-                mRecorder.stop();
-                mRecorder.release();
-                mRecorder = null;
-                Toast.makeText(getApplicationContext(), "Recording Stopped", Toast.LENGTH_LONG).show();
-            }
-        });
         playbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
