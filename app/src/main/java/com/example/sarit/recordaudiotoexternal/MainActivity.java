@@ -16,7 +16,10 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Date;
 
 import static android.Manifest.permission.RECORD_AUDIO;
@@ -27,10 +30,12 @@ public class MainActivity extends AppCompatActivity {
     private MediaRecorder mRecorder;
     private MediaPlayer mPlayer;
     private static final String LOG_TAG = "AudioRecording";
-    private static String mFileName = null;
     public static final int REQUEST_AUDIO_PERMISSION_CODE = 1;
     boolean isRecording = false;
     boolean isPlaying = false;
+    private static String mFileName = null;
+    private static String dataFile = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,11 +46,14 @@ public class MainActivity extends AppCompatActivity {
 
         //mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
         mFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS).getAbsolutePath();
-
         Toast.makeText(MainActivity.this,mFileName.toString(),Toast.LENGTH_SHORT).show();
         mFileName += "/AudioRecording.3gp";
 
+        dataFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+        Toast.makeText(MainActivity.this,dataFile.toString(),Toast.LENGTH_SHORT).show();
+        dataFile += "/SaritData.txt";
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
@@ -124,28 +132,62 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void findButton(View v){
+        String time = updateTime();
+        String button_type = null;
         switch (v.getId()) {
 
             case R.id.good_y:
                 Toast.makeText(MainActivity.this, "good_y clicked", Toast.LENGTH_SHORT).show();
-
+                button_type = "good_y";
                 break;
 
             case R.id.great_b:
                 Toast.makeText(MainActivity.this, "great_b clicked", Toast.LENGTH_SHORT).show();
+                button_type = "great_b";
                 break;
 
             case R.id.knewit_x:
                 Toast.makeText(MainActivity.this, "knewit_x clicked", Toast.LENGTH_SHORT).show();
+                button_type = "knewit_x";
                 break;
+
             case R.id.notuseful_a:
                 Toast.makeText(MainActivity.this, "notuseful_a clicked", Toast.LENGTH_SHORT).show();
-
+                button_type = "notuseful_a";
                 break;
             default:
                 break;
         }
 
+        String toprint = button_type + "\t" +time;
+        appendData(toprint);
+    }
+
+    public void appendData(String toprint){
+        try {
+            FileOutputStream outputWriter = new FileOutputStream(dataFile, true);
+            Toast.makeText(getApplicationContext(),
+                    "msg to be written" + toprint, Toast.LENGTH_SHORT).show();
+
+            outputWriter.write(toprint.toString().getBytes());
+            PrintWriter pw = new PrintWriter(outputWriter);
+            //pw.println("Hi , How are you");
+            pw.flush();
+            pw.close();
+            Log.d(LOG_TAG, toprint);
+            outputWriter.close();
+            Log.d(LOG_TAG, "file closed");
+            Toast.makeText(getApplicationContext(), "File saved successfully!",
+                    Toast.LENGTH_SHORT).show();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Log.i(LOG_TAG, "******* File not found. Did you" +
+                    " add a WRITE_EXTERNAL_STORAGE permission to the   manifest?");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.d(LOG_TAG,"\n\nFile written to");
 
     }
 
