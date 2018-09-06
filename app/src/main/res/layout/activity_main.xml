@@ -5,7 +5,7 @@
 
 
     <ToggleButton
-        android:id="@+id/toggleButton2"
+        android:id="@+id/startRecording"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="250dp"
@@ -15,16 +15,53 @@
         android:textOff="Start Recording"
         android:textOn="Stop Recording" />
 
-    <Button
-        android:id="@+id/btnPlay"
+    <ToggleButton
+        android:id="@+id/playRecording"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:text="Play Recording" />
+        android:layout_marginLeft="250dp"
+        android:checked="false"
+        android:onClick="startPlaying"
+        android:text="ToggleButton"
+        android:textOff="Play Recording"
+        android:textOn="Stop Playing" />
+
+
     <Button
-        android:id="@+id/btnStopPlay"
+        android:id="@+id/good_y"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:text="Stop Playing" />
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="75dp"
+        android:onClick="findButton"
+        android:text="Good_Y" />
+
+    <Button
+        android:id="@+id/great_b"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/good_y"
+        android:layout_centerHorizontal="true"
+        android:onClick="findButton"
+
+        android:text="Great_B" />
+
+    <Button
+        android:id="@+id/notuseful_a"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:onClick="findButton"
+
+        android:layout_centerHorizontal="true"
+        android:text="NotUseful_A" />
+
+    <Button
+        android:id="@+id/knewit_x"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="KnewIt_X" />
 </LinearLayout>
