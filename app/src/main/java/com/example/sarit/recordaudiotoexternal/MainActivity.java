@@ -16,17 +16,19 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import java.text.SimpleDateFormat;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
-
+import java.text.Format;
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class MainActivity extends AppCompatActivity {
     private ToggleButton startRecording, playRecording;
+    private Button great_b, good_y, notuseful_a, knewit_x;
     private MediaRecorder mRecorder;
     private MediaPlayer mPlayer;
     private static final String LOG_TAG = "AudioRecording";
@@ -35,23 +37,32 @@ public class MainActivity extends AppCompatActivity {
     boolean isPlaying = false;
     private static String mFileName = null;
     private static String dataFile = null;
-
+    private String[] args;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(com.example.sarit.recordaudiotoexternal.R.layout.activity_main);
         startRecording = findViewById(com.example.sarit.recordaudiotoexternal.R.id.startRecording);
         playRecording = findViewById(com.example.sarit.recordaudiotoexternal.R.id.playRecording);
+        great_b = findViewById(R.id.great_b);
+        good_y = findViewById(R.id.good_y);
+        notuseful_a = findViewById(R.id.notuseful_a);
+        knewit_x = findViewById(R.id.knewit_x);
+        great_b.setEnabled(false);
+        good_y.setEnabled(false);
+        notuseful_a.setEnabled(false);
+        knewit_x.setEnabled(false);
+
         playRecording.setEnabled(false);
 
-        //mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
         mFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS).getAbsolutePath();
-        Toast.makeText(MainActivity.this,mFileName.toString(),Toast.LENGTH_SHORT).show();
+        //Toast.makeText(MainActivity.this,mFileName.toString(),Toast.LENGTH_SHORT).show();
         mFileName += "/AudioRecording.3gp";
 
         dataFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
-        Toast.makeText(MainActivity.this,dataFile.toString(),Toast.LENGTH_SHORT).show();
+        //Toast.makeText(MainActivity.this,dataFile.toString(),Toast.LENGTH_SHORT).show();
         dataFile += "/SaritData.txt";
+
     }
 
     @Override
@@ -91,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
             } catch (IOException e) {
                 Log.e(LOG_TAG, "prepare() failed");
             }
-
         }
         else if (isPlaying){
             mPlayer.release();
@@ -102,6 +112,11 @@ public class MainActivity extends AppCompatActivity {
     public void startRecording(View view){
         if(CheckPermissions()) {
             if (!isRecording) {
+                great_b.setEnabled(true);
+                good_y.setEnabled(true);
+                notuseful_a.setEnabled(true);
+                knewit_x.setEnabled(true);
+
                 mRecorder = new MediaRecorder();
                 mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
                 mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
@@ -119,6 +134,11 @@ public class MainActivity extends AppCompatActivity {
                 playRecording.setEnabled(true);
 
             } else if (isRecording) {
+                great_b.setEnabled(false);
+                good_y.setEnabled(false);
+                notuseful_a.setEnabled(false);
+                knewit_x.setEnabled(false);
+
                 Toast.makeText(MainActivity.this, "Stopped recording", Toast.LENGTH_SHORT).show();
                  mRecorder.stop();
                 mRecorder.release();
@@ -135,39 +155,46 @@ public class MainActivity extends AppCompatActivity {
         String time = updateTime();
         String button_type = null;
         switch (v.getId()) {
-
-            case R.id.good_y:
-                Toast.makeText(MainActivity.this, "good_y clicked", Toast.LENGTH_SHORT).show();
-                button_type = "good_y";
-                break;
-
             case R.id.great_b:
-                Toast.makeText(MainActivity.this, "great_b clicked", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "great_b clicked", Toast.LENGTH_SHORT).show();
+                MediaPlayer mp4 = MediaPlayer.create(MainActivity.this, R.raw.beep4);
+                mp4.start();
                 button_type = "great_b";
                 break;
 
+            case R.id.good_y:
+                //Toast.makeText(MainActivity.this, "good_y clicked", Toast.LENGTH_SHORT).show();
+                button_type = "good_y";
+                MediaPlayer mp3 = MediaPlayer.create(MainActivity.this, R.raw.beep3);
+                mp3.start();
+                break;
+
             case R.id.knewit_x:
-                Toast.makeText(MainActivity.this, "knewit_x clicked", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "knewit_x clicked", Toast.LENGTH_SHORT).show();
+                MediaPlayer mp2 = MediaPlayer.create(MainActivity.this, R.raw.beep2);
+                mp2.start();
                 button_type = "knewit_x";
                 break;
 
             case R.id.notuseful_a:
-                Toast.makeText(MainActivity.this, "notuseful_a clicked", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "notuseful_a clicked", Toast.LENGTH_SHORT).show();
+                MediaPlayer mp1 = MediaPlayer.create(MainActivity.this, R.raw.beep1);
+                mp1.start();
                 button_type = "notuseful_a";
                 break;
+
             default:
                 break;
         }
 
-        String toprint = button_type + "\t" +time;
+        String toprint = button_type + "\t" +time+"\n";
         appendData(toprint);
     }
 
     public void appendData(String toprint){
         try {
             FileOutputStream outputWriter = new FileOutputStream(dataFile, true);
-            Toast.makeText(getApplicationContext(),
-                    "msg to be written" + toprint, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "msg to be written" + toprint, Toast.LENGTH_SHORT).show();
 
             outputWriter.write(toprint.toString().getBytes());
             PrintWriter pw = new PrintWriter(outputWriter);
@@ -177,8 +204,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(LOG_TAG, toprint);
             outputWriter.close();
             Log.d(LOG_TAG, "file closed");
-            Toast.makeText(getApplicationContext(), "File saved successfully!",
-                    Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "File saved successfully!", Toast.LENGTH_SHORT).show();
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -192,11 +218,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public String updateTime() {
-        //java.util.Date() method is used to get the current time
-        String time = new Date().toString();
-        Toast.makeText(getApplicationContext(),
-                time, Toast.LENGTH_SHORT).show();
-        return time;
+        Date time = new Date();
+        Format formatter = new SimpleDateFormat("YYYY-MM-dd_hh-mm-ss");
+        String timestamp = formatter.format(time);
+        Toast.makeText(getApplicationContext(), timestamp, Toast.LENGTH_SHORT).show();
+
+        return timestamp;
     }
+
+
 }
 
