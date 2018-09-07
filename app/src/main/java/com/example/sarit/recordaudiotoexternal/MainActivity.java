@@ -21,6 +21,9 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.media.SoundPool.OnLoadCompleteListener;
 
 import java.text.SimpleDateFormat;
 import java.io.FileNotFoundException;
@@ -47,9 +50,12 @@ public class MainActivity extends AppCompatActivity {
     public static final int REQUEST_AUDIO_PERMISSION_CODE = 1;
     boolean isRecording = false;
     boolean isPlaying = false;
+    boolean loaded = false;
     private static String mFileName = null;
     private static String dataFile = null;
-    private String[] args;
+    //private String[] args;
+    private SoundPool soundPool;
+    private int beep1, beep2, beep3,beep4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +72,18 @@ public class MainActivity extends AppCompatActivity {
         notuseful_a.setEnabled(false);
         knewit_x.setEnabled(false);
         playRecording.setEnabled(false);
+        soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
+        soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+            @Override
+            public void onLoadComplete(SoundPool soundPool, int mySoundId, int status) {
+                loaded = true;
+            }
+        });
+        beep1 = soundPool.load(this, R.raw.beep1, 1);
+        beep2 = soundPool.load(this, R.raw.beep2, 1);
+        beep3 = soundPool.load(this, R.raw.beep3, 1);
+        beep4 = soundPool.load(this, R.raw.beep4, 1);
+
 
         String expTime = updateTime();
         mFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS).getAbsolutePath();
@@ -123,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void startRecording(View view){
-        Toast.makeText(MainActivity.this, "in startRecording", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(MainActivity.this, "in startRecording", Toast.LENGTH_SHORT).show();
 
         if(CheckPermissions()) {
             if (!isRecording) { // if recording audio
@@ -145,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 mRecorder.start();
                 isRecording = true;
-                Toast.makeText(getApplicationContext(), "Recording Started", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), "Recording Started", Toast.LENGTH_LONG).show();
                 playRecording.setEnabled(true);
 
             } else if (isRecording) { //if not recording audio
@@ -157,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
                 mRecorder.release();
                 mRecorder = null;
                 isRecording = false;
-                Toast.makeText(getApplicationContext(), "Recording Stopped", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), "Recording Stopped", Toast.LENGTH_LONG).show();
             }
         }
         else {
@@ -170,30 +188,26 @@ public class MainActivity extends AppCompatActivity {
         String button_type = null;
         switch (v.getId()) {
             case R.id.great_b:
-                Toast.makeText(MainActivity.this, "find button great_b clicked", Toast.LENGTH_SHORT).show();
-                MediaPlayer mp4 = MediaPlayer.create(MainActivity.this, R.raw.beep4);
-                mp4.start();
+                //Toast.makeText(MainActivity.this, "find button great_b clicked", Toast.LENGTH_SHORT).show();
+                soundPool.play(beep4, 1F, 1F, 1, 0, 1f);
                 button_type = "great_b";
                 break;
 
             case R.id.good_y:
-                Toast.makeText(MainActivity.this, "find button good_y clicked", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "find button good_y clicked", Toast.LENGTH_SHORT).show();
                 button_type = "good_y";
-                MediaPlayer mp3 = MediaPlayer.create(MainActivity.this, R.raw.beep3);
-                mp3.start();
+                soundPool.play(beep3, 1F, 1F, 1, 0, 1f);
                 break;
 
             case R.id.knewit_x:
-                Toast.makeText(MainActivity.this, "find button knewit_x clicked", Toast.LENGTH_SHORT).show();
-                MediaPlayer mp2 = MediaPlayer.create(MainActivity.this, R.raw.beep2);
-                mp2.start();
+                //Toast.makeText(MainActivity.this, "find button knewit_x clicked", Toast.LENGTH_SHORT).show();
+                soundPool.play(beep2, 1F, 1F, 1, 0, 1f);
                 button_type = "knewit_x";
                 break;
 
             case R.id.notuseful_a:
-                Toast.makeText(MainActivity.this, "find button notuseful_a clicked", Toast.LENGTH_SHORT).show();
-                MediaPlayer mp1 = MediaPlayer.create(MainActivity.this, R.raw.beep1);
-                mp1.start();
+                //Toast.makeText(MainActivity.this, "find button notuseful_a clicked", Toast.LENGTH_SHORT).show();
+                soundPool.play(beep1, 1F, 1F, 1, 0, 1f);
                 button_type = "notuseful_a";
                 break;
 
@@ -255,7 +269,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }*/
 
-        Toast.makeText(MainActivity.this, "in onkeydown", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(MainActivity.this, "in onkeydown", Toast.LENGTH_SHORT).show();
 
         if ((event.getSource() & android.view.InputDevice.SOURCE_GAMEPAD)
                 == android.view.InputDevice.SOURCE_GAMEPAD) {
@@ -263,29 +277,25 @@ public class MainActivity extends AppCompatActivity {
                 switch (keyCode) {
                     case KEYCODE_BUTTON_B:
                         //Toast.makeText(MainActivity.this, "key down great_b clicked", Toast.LENGTH_SHORT).show();
-                        MediaPlayer mp4 = MediaPlayer.create(MainActivity.this, R.raw.beep4);
-                        mp4.start();
+                        soundPool.play(beep4, 1F, 1F, 1, 0, 1f);
                         button_type = "great_b";
                         return true;
 
                     case KEYCODE_BUTTON_Y:
                         //Toast.makeText(MainActivity.this, "Key down good_y clicked", Toast.LENGTH_SHORT).show();
                         button_type = "good_y";
-                        MediaPlayer mp3 = MediaPlayer.create(MainActivity.this, R.raw.beep3);
-                        mp3.start();
+                        soundPool.play(beep3, 1F, 1F, 1, 0, 1f);
                         return true;
 
                     case KEYCODE_BUTTON_X:
                         //Toast.makeText(MainActivity.this, "Key Down knewit_x clicked", Toast.LENGTH_SHORT).show();
-                        MediaPlayer mp2 = MediaPlayer.create(MainActivity.this, R.raw.beep2);
-                        mp2.start();
+                        soundPool.play(beep2, 1F, 1F, 1, 0, 1f);
                         button_type = "knewit_x";
                         return true;
 
                     case KEYCODE_BUTTON_A:
                         //Toast.makeText(MainActivity.this, "Key Down notuseful_a clicked", Toast.LENGTH_SHORT).show();
-                        MediaPlayer mp1 = MediaPlayer.create(MainActivity.this, R.raw.beep1);
-                        mp1.start();
+                        soundPool.play(beep1, 1F, 1F, 1, 0, 1f);
                         button_type = "notuseful_a";
                         return true;
 
@@ -300,6 +310,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         Toast.makeText(MainActivity.this, "Back pressed", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        soundPool.release();
+        soundPool = null;
     }
 }
 
