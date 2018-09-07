@@ -261,54 +261,40 @@ public class MainActivity extends AppCompatActivity {
                 == android.view.InputDevice.SOURCE_GAMEPAD) {
             if ((event.getRepeatCount() == 0) & isRecording ){
                 switch (keyCode) {
-                    case (KEYCODE_BUTTON_B):
-                        Toast.makeText(MainActivity.this, "key down great_b clicked", Toast.LENGTH_SHORT).show();
-
-                        if (keyCode == KEYCODE_BACK) {
-                            MediaPlayer mp4 = MediaPlayer.create(MainActivity.this, R.raw.beep4);
-                            mp4.start();
-                            button_type = "great_b";
-                            Toast.makeText(MainActivity.this, "key back removed", Toast.LENGTH_SHORT).show();
-                            return false;
-                            //break;
-                        }
-                        break;
+                    case KEYCODE_BUTTON_B:
+                        //Toast.makeText(MainActivity.this, "key down great_b clicked", Toast.LENGTH_SHORT).show();
+                        MediaPlayer mp4 = MediaPlayer.create(MainActivity.this, R.raw.beep4);
+                        mp4.start();
+                        button_type = "great_b";
+                        return true;
 
                     case KEYCODE_BUTTON_Y:
-                        Toast.makeText(MainActivity.this, "Key down good_y clicked", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(MainActivity.this, "Key down good_y clicked", Toast.LENGTH_SHORT).show();
                         button_type = "good_y";
                         MediaPlayer mp3 = MediaPlayer.create(MainActivity.this, R.raw.beep3);
                         mp3.start();
-                        //break;
-                        handled = true;
-
-                        return false;
+                        return true;
 
                     case KEYCODE_BUTTON_X:
-                        Toast.makeText(MainActivity.this, "Key Down knewit_x clicked", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(MainActivity.this, "Key Down knewit_x clicked", Toast.LENGTH_SHORT).show();
                         MediaPlayer mp2 = MediaPlayer.create(MainActivity.this, R.raw.beep2);
                         mp2.start();
                         button_type = "knewit_x";
-                        handled = true;
-
-                        break;
+                        return true;
 
                     case KEYCODE_BUTTON_A:
-                        Toast.makeText(MainActivity.this, "Key Down notuseful_a clicked", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(MainActivity.this, "Key Down notuseful_a clicked", Toast.LENGTH_SHORT).show();
                         MediaPlayer mp1 = MediaPlayer.create(MainActivity.this, R.raw.beep1);
                         mp1.start();
                         button_type = "notuseful_a";
-                        //break;
-                        handled = true;
-
-                        return false;
+                        return true;
 
                 }
                 String toprint = button_type + "\t" +time+"\n";
                 appendData(toprint);
             }
         }
-        return handled||super.onKeyDown(keyCode, event);
+        return false;
     }
 
     @Override
