@@ -15,6 +15,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+import android.view.KeyEvent;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
 
 import java.text.SimpleDateFormat;
 import java.io.FileNotFoundException;
@@ -23,8 +29,14 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.text.Format;
+
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.view.KeyEvent.KEYCODE_BUTTON_B;
+import static android.view.KeyEvent.KEYCODE_BUTTON_A;
+import static android.view.KeyEvent.KEYCODE_BUTTON_X;
+import static android.view.KeyEvent.KEYCODE_BUTTON_Y;
+import static android.view.KeyEvent.KEYCODE_BACK;
 
 public class MainActivity extends AppCompatActivity {
     private ToggleButton startRecording, playRecording;
@@ -111,6 +123,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void startRecording(View view){
+        Toast.makeText(MainActivity.this, "in startRecording", Toast.LENGTH_SHORT).show();
+
         if(CheckPermissions()) {
             if (!isRecording) { // if recording audio
                 great_b.setEnabled(true);
@@ -123,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                 mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
                 mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
                 mRecorder.setOutputFile(mFileName);
-                Toast.makeText(MainActivity.this, mFileName.toString(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, mFileName.toString(), Toast.LENGTH_SHORT).show();
                 try {
                     mRecorder.prepare();
                 } catch (IOException e) {
@@ -156,28 +170,28 @@ public class MainActivity extends AppCompatActivity {
         String button_type = null;
         switch (v.getId()) {
             case R.id.great_b:
-                //Toast.makeText(MainActivity.this, "great_b clicked", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "find button great_b clicked", Toast.LENGTH_SHORT).show();
                 MediaPlayer mp4 = MediaPlayer.create(MainActivity.this, R.raw.beep4);
                 mp4.start();
                 button_type = "great_b";
                 break;
 
             case R.id.good_y:
-                //Toast.makeText(MainActivity.this, "good_y clicked", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "find button good_y clicked", Toast.LENGTH_SHORT).show();
                 button_type = "good_y";
                 MediaPlayer mp3 = MediaPlayer.create(MainActivity.this, R.raw.beep3);
                 mp3.start();
                 break;
 
             case R.id.knewit_x:
-                //Toast.makeText(MainActivity.this, "knewit_x clicked", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "find button knewit_x clicked", Toast.LENGTH_SHORT).show();
                 MediaPlayer mp2 = MediaPlayer.create(MainActivity.this, R.raw.beep2);
                 mp2.start();
                 button_type = "knewit_x";
                 break;
 
             case R.id.notuseful_a:
-                //Toast.makeText(MainActivity.this, "notuseful_a clicked", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "find button notuseful_a clicked", Toast.LENGTH_SHORT).show();
                 MediaPlayer mp1 = MediaPlayer.create(MainActivity.this, R.raw.beep1);
                 mp1.start();
                 button_type = "notuseful_a";
@@ -194,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
     public void appendData(String toprint){
         try {
             FileOutputStream outputWriter = new FileOutputStream(dataFile, true);
-            Toast.makeText(getApplicationContext(), "msg to be written" + toprint, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "msg to be written" + toprint, Toast.LENGTH_SHORT).show();
 
             outputWriter.write(toprint.toString().getBytes());
             PrintWriter pw = new PrintWriter(outputWriter);
@@ -221,11 +235,85 @@ public class MainActivity extends AppCompatActivity {
         Date time = new Date();
         Format formatter = new SimpleDateFormat("YYYY-MM-dd_hh-mm-ss");
         String timestamp = formatter.format(time);
-        Toast.makeText(getApplicationContext(), timestamp, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), timestamp, Toast.LENGTH_SHORT).show();
 
         return timestamp;
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        boolean handled = false;
+        String time = updateTime();
+        String button_type = null;
+        /*if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            // do something on back.
+            if ((event.getSource() & android.view.InputDevice.SOURCE_GAMEPAD)
+                    == android.view.InputDevice.SOURCE_GAMEPAD){
+                Toast.makeText(MainActivity.this, "Back button pressed", Toast.LENGTH_SHORT).show();
+                handled = true;
+                return true;
+            }
+        }*/
 
+        Toast.makeText(MainActivity.this, "in onkeydown", Toast.LENGTH_SHORT).show();
+
+        if ((event.getSource() & android.view.InputDevice.SOURCE_GAMEPAD)
+                == android.view.InputDevice.SOURCE_GAMEPAD) {
+            if ((event.getRepeatCount() == 0) & isRecording ){
+                switch (keyCode) {
+                    case (KEYCODE_BUTTON_B):
+                        Toast.makeText(MainActivity.this, "key down great_b clicked", Toast.LENGTH_SHORT).show();
+
+                        if (keyCode == KEYCODE_BACK) {
+                            MediaPlayer mp4 = MediaPlayer.create(MainActivity.this, R.raw.beep4);
+                            mp4.start();
+                            button_type = "great_b";
+                            Toast.makeText(MainActivity.this, "key back removed", Toast.LENGTH_SHORT).show();
+                            return false;
+                            //break;
+                        }
+                        break;
+
+                    case KEYCODE_BUTTON_Y:
+                        Toast.makeText(MainActivity.this, "Key down good_y clicked", Toast.LENGTH_SHORT).show();
+                        button_type = "good_y";
+                        MediaPlayer mp3 = MediaPlayer.create(MainActivity.this, R.raw.beep3);
+                        mp3.start();
+                        //break;
+                        handled = true;
+
+                        return false;
+
+                    case KEYCODE_BUTTON_X:
+                        Toast.makeText(MainActivity.this, "Key Down knewit_x clicked", Toast.LENGTH_SHORT).show();
+                        MediaPlayer mp2 = MediaPlayer.create(MainActivity.this, R.raw.beep2);
+                        mp2.start();
+                        button_type = "knewit_x";
+                        handled = true;
+
+                        break;
+
+                    case KEYCODE_BUTTON_A:
+                        Toast.makeText(MainActivity.this, "Key Down notuseful_a clicked", Toast.LENGTH_SHORT).show();
+                        MediaPlayer mp1 = MediaPlayer.create(MainActivity.this, R.raw.beep1);
+                        mp1.start();
+                        button_type = "notuseful_a";
+                        //break;
+                        handled = true;
+
+                        return false;
+
+                }
+                String toprint = button_type + "\t" +time+"\n";
+                appendData(toprint);
+            }
+        }
+        return handled||super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Toast.makeText(MainActivity.this, "Back pressed", Toast.LENGTH_SHORT).show();
+    }
 }
 
