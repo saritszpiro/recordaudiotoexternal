@@ -1,45 +1,44 @@
 package com.example.sarit.recordaudiotoexternal;
 
 //import com.example.sarit.recordaudiotoexternal.*;
-import android.app.Activity;
+
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.media.SoundPool;
+import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-import android.view.KeyEvent;
-import android.app.AlertDialog.Builder;
-import android.content.DialogInterface;
-import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.media.AudioManager;
-import android.media.SoundPool;
-import android.media.SoundPool.OnLoadCompleteListener;
 
-import java.text.SimpleDateFormat;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Date;
 import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-import static android.view.KeyEvent.KEYCODE_BUTTON_B;
 import static android.view.KeyEvent.KEYCODE_BUTTON_A;
+import static android.view.KeyEvent.KEYCODE_BUTTON_B;
 import static android.view.KeyEvent.KEYCODE_BUTTON_X;
 import static android.view.KeyEvent.KEYCODE_BUTTON_Y;
-import static android.view.KeyEvent.KEYCODE_BACK;
 
 public class MainActivity extends AppCompatActivity {
     private ToggleButton startRecording, playRecording;
@@ -51,11 +50,13 @@ public class MainActivity extends AppCompatActivity {
     boolean isRecording = false;
     boolean isPlaying = false;
     boolean loaded = false;
-    private static String mFileName = null;
-    private static String dataFile = null;
+    private  String mFileName = null;
+    private  String dataFile = null;
     //private String[] args;
     private SoundPool soundPool;
     private int beep1, beep2, beep3,beep4;
+    EditText participantName;
+    private String text = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         notuseful_a.setEnabled(false);
         knewit_x.setEnabled(false);
         playRecording.setEnabled(false);
+
         soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
         soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
             @Override
@@ -84,15 +86,24 @@ public class MainActivity extends AppCompatActivity {
         beep3 = soundPool.load(this, R.raw.beep3, 1);
         beep4 = soundPool.load(this, R.raw.beep4, 1);
 
-
-        String expTime = updateTime();
-        mFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS).getAbsolutePath();
-        //Toast.makeText(MainActivity.this,mFileName.toString(),Toast.LENGTH_SHORT).show();
-        mFileName += "/AudioRecording_" + expTime + "_.3gp";
-
-        dataFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
-        //Toast.makeText(MainActivity.this,dataFile.toString(),Toast.LENGTH_SHORT).show();
-        dataFile += "/SaritData_" + expTime + ".txt";
+        participantName = (EditText) findViewById(R.id.participantName);
+        participantName.setHint("Name");
+        //setContentView(R.layout.activity_main);
+        participantName.setOnEditorActionListener(new OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    Toast.makeText(MainActivity.this,participantName.getText().toString(),Toast.LENGTH_SHORT).show();
+                    String text= participantName.getEditableText().toString();
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(participantName.getWindowToken(), 0);
+                    handled = true;
+                }
+                return handled;
+            }
+        });
+        //Toast.makeText(MainActivity.this,text,Toast.LENGTH_SHORT).show();
 
     }
 
@@ -141,7 +152,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void startRecording(View view){
+        text = participantName.getEditableText().toString();
         //Toast.makeText(MainActivity.this, "in startRecording", Toast.LENGTH_SHORT).show();
+        String expTime = updateTime();
+        mFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS).getAbsolutePath();
+        //Toast.makeText(MainActivity.this,mFileName.toString(),Toast.LENGTH_SHORT).show();
+        mFileName += "/AudioRecording_" + text + "_" + expTime + "_.3gp";
+
+        dataFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+        //Toast.makeText(MainActivity.this,dataFile.toString(),Toast.LENGTH_SHORT).show();
+        dataFile += "/SaritData_" + text + "_" + expTime + ".txt";
 
         if(CheckPermissions()) {
             if (!isRecording) { // if recording audio
@@ -149,13 +169,14 @@ public class MainActivity extends AppCompatActivity {
                 good_y.setEnabled(true);
                 notuseful_a.setEnabled(true);
                 knewit_x.setEnabled(true);
+                participantName.setEnabled(false);
 
                 mRecorder = new MediaRecorder();
                 mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
                 mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
                 mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
                 mRecorder.setOutputFile(mFileName);
-                //Toast.makeText(MainActivity.this, mFileName.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, mFileName.toString(), Toast.LENGTH_SHORT).show();
                 try {
                     mRecorder.prepare();
                 } catch (IOException e) {
@@ -171,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
                 good_y.setEnabled(false);
                 notuseful_a.setEnabled(false);
                 knewit_x.setEnabled(false);
+                participantName.setEnabled(true);
                 mRecorder.stop();
                 mRecorder.release();
                 mRecorder = null;
@@ -222,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
     public void appendData(String toprint){
         try {
             FileOutputStream outputWriter = new FileOutputStream(dataFile, true);
-            //Toast.makeText(getApplicationContext(), "msg to be written" + toprint, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "msg to be written " + dataFile.toString(), Toast.LENGTH_SHORT).show();
 
             outputWriter.write(toprint.toString().getBytes());
             PrintWriter pw = new PrintWriter(outputWriter);

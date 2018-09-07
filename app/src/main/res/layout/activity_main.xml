@@ -5,6 +5,15 @@
     android:layout_height="match_parent">
 
 
+    <EditText
+        android:id="@+id/participantName"
+        android:layout_width="167dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Name"
+        android:imeOptions="actionDone"/>
+
     <ToggleButton
         android:id="@+id/startRecording"
         android:layout_width="wrap_content"
