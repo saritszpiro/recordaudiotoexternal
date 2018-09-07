@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private static String mFileName = null;
     private static String dataFile = null;
     private String[] args;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,16 +53,16 @@ public class MainActivity extends AppCompatActivity {
         good_y.setEnabled(false);
         notuseful_a.setEnabled(false);
         knewit_x.setEnabled(false);
-
         playRecording.setEnabled(false);
 
+        String expTime = updateTime();
         mFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS).getAbsolutePath();
         //Toast.makeText(MainActivity.this,mFileName.toString(),Toast.LENGTH_SHORT).show();
-        mFileName += "/AudioRecording.3gp";
+        mFileName += "/AudioRecording_" + expTime + "_.3gp";
 
         dataFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
         //Toast.makeText(MainActivity.this,dataFile.toString(),Toast.LENGTH_SHORT).show();
-        dataFile += "/SaritData.txt";
+        dataFile += "/SaritData_" + expTime + ".txt";
 
     }
 
@@ -111,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public void startRecording(View view){
         if(CheckPermissions()) {
-            if (!isRecording) {
+            if (!isRecording) { // if recording audio
                 great_b.setEnabled(true);
                 good_y.setEnabled(true);
                 notuseful_a.setEnabled(true);
@@ -133,16 +134,15 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Recording Started", Toast.LENGTH_LONG).show();
                 playRecording.setEnabled(true);
 
-            } else if (isRecording) {
+            } else if (isRecording) { //if not recording audio
                 great_b.setEnabled(false);
                 good_y.setEnabled(false);
                 notuseful_a.setEnabled(false);
                 knewit_x.setEnabled(false);
-
-                Toast.makeText(MainActivity.this, "Stopped recording", Toast.LENGTH_SHORT).show();
-                 mRecorder.stop();
+                mRecorder.stop();
                 mRecorder.release();
                 mRecorder = null;
+                isRecording = false;
                 Toast.makeText(getApplicationContext(), "Recording Stopped", Toast.LENGTH_LONG).show();
             }
         }
