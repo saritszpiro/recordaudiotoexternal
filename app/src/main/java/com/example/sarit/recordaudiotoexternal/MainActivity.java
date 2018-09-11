@@ -28,7 +28,6 @@ import android.widget.ToggleButton;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -94,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 boolean handled = false;
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    Toast.makeText(MainActivity.this,participantName.getText().toString(),Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MainActivity.this,participantName.getText().toString(),Toast.LENGTH_SHORT).show();
                     String text= participantName.getEditableText().toString();
                     InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(participantName.getWindowToken(), 0);
@@ -243,14 +242,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void appendData(String toprint){
         try {
+            //Toast.makeText(getApplicationContext(), "msg to be written " + dataFile.toString(), Toast.LENGTH_SHORT).show();
             FileOutputStream outputWriter = new FileOutputStream(dataFile, true);
-            Toast.makeText(getApplicationContext(), "msg to be written " + dataFile.toString(), Toast.LENGTH_SHORT).show();
-
             outputWriter.write(toprint.toString().getBytes());
-            PrintWriter pw = new PrintWriter(outputWriter);
-            //pw.println("Hi , How are you");
-            pw.flush();
-            pw.close();
+            //outputWriter.println("Hi , How are you");
+            outputWriter.flush();
+            outputWriter.close();
             Log.d(LOG_TAG, toprint);
             outputWriter.close();
             Log.d(LOG_TAG, "file closed");
@@ -281,42 +278,31 @@ public class MainActivity extends AppCompatActivity {
         boolean handled = false;
         String time = updateTime();
         String button_type = null;
-        /*if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-            // do something on back.
-            if ((event.getSource() & android.view.InputDevice.SOURCE_GAMEPAD)
-                    == android.view.InputDevice.SOURCE_GAMEPAD){
-                Toast.makeText(MainActivity.this, "Back button pressed", Toast.LENGTH_SHORT).show();
-                handled = true;
-                return true;
-            }
-        }*/
-
-        //Toast.makeText(MainActivity.this, "in onkeydown", Toast.LENGTH_SHORT).show();
 
         if ((event.getSource() & android.view.InputDevice.SOURCE_GAMEPAD)
                 == android.view.InputDevice.SOURCE_GAMEPAD) {
             if ((event.getRepeatCount() == 0) & isRecording ){
                 switch (keyCode) {
                     case KEYCODE_BUTTON_B:
-                        //Toast.makeText(MainActivity.this, "key down great_b clicked", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "key down great_b clicked", Toast.LENGTH_SHORT).show();
                         soundPool.play(beep4, 1F, 1F, 1, 0, 1f);
                         button_type = "great_b";
                         return true;
 
                     case KEYCODE_BUTTON_Y:
-                        //Toast.makeText(MainActivity.this, "Key down good_y clicked", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Key down good_y clicked", Toast.LENGTH_SHORT).show();
                         button_type = "good_y";
                         soundPool.play(beep3, 1F, 1F, 1, 0, 1f);
                         return true;
 
                     case KEYCODE_BUTTON_X:
-                        //Toast.makeText(MainActivity.this, "Key Down knewit_x clicked", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Key Down knewit_x clicked", Toast.LENGTH_SHORT).show();
                         soundPool.play(beep2, 1F, 1F, 1, 0, 1f);
                         button_type = "knewit_x";
                         return true;
 
                     case KEYCODE_BUTTON_A:
-                        //Toast.makeText(MainActivity.this, "Key Down notuseful_a clicked", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Key Down notuseful_a clicked", Toast.LENGTH_SHORT).show();
                         soundPool.play(beep1, 1F, 1F, 1, 0, 1f);
                         button_type = "notuseful_a";
                         return true;
