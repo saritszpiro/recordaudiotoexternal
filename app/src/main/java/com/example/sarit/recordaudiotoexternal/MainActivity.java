@@ -25,6 +25,7 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private SoundPool soundPool;
     private int beep1, beep2, beep3,beep4;
     EditText participantName;
-    private String text = null;
+    private String name = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
                 boolean handled = false;
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     //Toast.makeText(MainActivity.this,participantName.getText().toString(),Toast.LENGTH_SHORT).show();
-                    String text= participantName.getEditableText().toString();
+                    String name = participantName.getEditableText().toString();
                     InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(participantName.getWindowToken(), 0);
                     handled = true;
@@ -129,16 +130,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startRecording(View view){
-        text = participantName.getEditableText().toString();
+        name = participantName.getEditableText().toString();
         //Toast.makeText(MainActivity.this, "in startRecording", Toast.LENGTH_SHORT).show();
         String expTime = updateTime();
-        mFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS).getAbsolutePath();
+        final File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), name);
+
+        if (!f.exists()) {
+            Log.d(LOG_TAG, "Folder doesn't exist, creating it...");
+            boolean rv = f.mkdir();
+            Log.d(LOG_TAG, "Folder creation " + ( rv ? "success" : "failed"));
+        } else {
+            Log.d(LOG_TAG, "Folder already exists.");
+        }
+
+        mFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
         //Toast.makeText(MainActivity.this,mFileName.toString(),Toast.LENGTH_SHORT).show();
-        mFileName += "/AudioRecording_" + text + "_" + expTime + "_.3gp";
+        mFileName += "/"+name+"/" + name + "_" + expTime + ".3gp";
 
         dataFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
         //Toast.makeText(MainActivity.this,dataFile.toString(),Toast.LENGTH_SHORT).show();
-        dataFile += "/SaritData_" + text + "_" + expTime + ".txt";
+        dataFile += "/"+name+"/" + name + "_" + expTime + ".txt";
 
         if(CheckPermissions()) {
             if (!isRecording) { // if recording audio
