@@ -40,14 +40,13 @@ import static android.view.KeyEvent.KEYCODE_BUTTON_X;
 import static android.view.KeyEvent.KEYCODE_BUTTON_Y;
 
 public class MainActivity extends AppCompatActivity {
-    private ToggleButton startRecording, playRecording;
+    private ToggleButton startRecording;
     private Button great_b, good_y, notuseful_a, knewit_x;
     private MediaRecorder mRecorder;
     private MediaPlayer mPlayer;
     private static final String LOG_TAG = "AudioRecording";
     public static final int REQUEST_AUDIO_PERMISSION_CODE = 1;
     boolean isRecording = false;
-    boolean isPlaying = false;
     boolean loaded = false;
     private  String mFileName = null;
     private  String dataFile = null;
@@ -62,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(com.example.sarit.recordaudiotoexternal.R.layout.activity_main);
         startRecording = findViewById(com.example.sarit.recordaudiotoexternal.R.id.startRecording);
-        playRecording = findViewById(com.example.sarit.recordaudiotoexternal.R.id.playRecording);
         great_b = findViewById(R.id.great_b);
         good_y = findViewById(R.id.good_y);
         notuseful_a = findViewById(R.id.notuseful_a);
@@ -71,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
         good_y.setEnabled(false);
         notuseful_a.setEnabled(false);
         knewit_x.setEnabled(false);
-        playRecording.setEnabled(false);
 
         soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
         soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
@@ -131,25 +128,6 @@ public class MainActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(MainActivity.this, new String[]{RECORD_AUDIO, WRITE_EXTERNAL_STORAGE}, REQUEST_AUDIO_PERMISSION_CODE);
     }
 
-    public void startPlaying(View view) {
-        if (!isPlaying){
-            startRecording.setEnabled(true);
-            mPlayer = new MediaPlayer();
-            try {
-                mPlayer.setDataSource(mFileName);
-                mPlayer.prepare();
-                mPlayer.start();
-                Toast.makeText(getApplicationContext(), "Recording Started Playing", Toast.LENGTH_LONG).show();
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "prepare() failed");
-            }
-        }
-        else if (isPlaying){
-            mPlayer.release();
-            mPlayer = null;
-            Toast.makeText(getApplicationContext(),"Playing Audio Stopped", Toast.LENGTH_SHORT).show();
-        }
-    }
     public void startRecording(View view){
         text = participantName.getEditableText().toString();
         //Toast.makeText(MainActivity.this, "in startRecording", Toast.LENGTH_SHORT).show();
@@ -184,7 +162,6 @@ public class MainActivity extends AppCompatActivity {
                 mRecorder.start();
                 isRecording = true;
                 //Toast.makeText(getApplicationContext(), "Recording Started", Toast.LENGTH_LONG).show();
-                playRecording.setEnabled(true);
 
             } else if (isRecording) { //if not recording audio
                 great_b.setEnabled(false);

@@ -25,17 +25,6 @@
         android:textOff="Start Recording"
         android:textOn="Stop Recording" />
 
-    <ToggleButton
-        android:id="@+id/playRecording"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="250dp"
-        android:checked="false"
-        android:onClick="startPlaying"
-        android:text="ToggleButton"
-        android:textOff="Play Recording"
-        android:textOn="Stop Playing" />
-
 
     <Button
         android:id="@+id/great_b"
