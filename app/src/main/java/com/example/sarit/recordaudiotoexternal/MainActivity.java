@@ -35,14 +35,12 @@ import java.util.Date;
 
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-import static android.view.KeyEvent.KEYCODE_BUTTON_A;
 import static android.view.KeyEvent.KEYCODE_BUTTON_B;
 import static android.view.KeyEvent.KEYCODE_BUTTON_X;
-import static android.view.KeyEvent.KEYCODE_BUTTON_Y;
 
 public class MainActivity extends AppCompatActivity {
     private ToggleButton startRecording;
-    private Button great_b, good_y, notuseful_a, knewit_x;
+    private Button useful_b, notuseful_x;
     private MediaRecorder mRecorder;
     private MediaPlayer mPlayer;
     private static final String LOG_TAG = "AudioRecording";
@@ -62,15 +60,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(com.example.sarit.recordaudiotoexternal.R.layout.activity_main);
         startRecording = findViewById(com.example.sarit.recordaudiotoexternal.R.id.startRecording);
-        great_b = findViewById(R.id.great_b);
-        good_y = findViewById(R.id.good_y);
-        notuseful_a = findViewById(R.id.notuseful_a);
-        knewit_x = findViewById(R.id.knewit_x);
-        great_b.setEnabled(false);
-        good_y.setEnabled(false);
-        notuseful_a.setEnabled(false);
-        knewit_x.setEnabled(false);
-
+        useful_b = findViewById(R.id.useful_b);
+        notuseful_x = findViewById(R.id.notuseful_x);
+        useful_b.setEnabled(false);
+        notuseful_x.setEnabled(false);
         soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
         soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
             @Override
@@ -79,8 +72,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         beep1 = soundPool.load(this, R.raw.beep1, 1);
-        beep2 = soundPool.load(this, R.raw.beep2, 1);
-        beep3 = soundPool.load(this, R.raw.beep3, 1);
         beep4 = soundPool.load(this, R.raw.beep4, 1);
 
         participantName = (EditText) findViewById(R.id.participantName);
@@ -145,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
 
         mFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
         //Toast.makeText(MainActivity.this,mFileName.toString(),Toast.LENGTH_SHORT).show();
-        mFileName += "/"+name+"/" + name + "_" + expTime + ".3gp";
+        mFileName += "/"+name+"/" + name + "_" + expTime + ".wav";
 
         dataFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
         //Toast.makeText(MainActivity.this,dataFile.toString(),Toast.LENGTH_SHORT).show();
@@ -153,10 +144,8 @@ public class MainActivity extends AppCompatActivity {
 
         if(CheckPermissions()) {
             if (!isRecording) { // if recording audio
-                great_b.setEnabled(true);
-                good_y.setEnabled(true);
-                notuseful_a.setEnabled(true);
-                knewit_x.setEnabled(true);
+                useful_b.setEnabled(true);
+                notuseful_x.setEnabled(true);
                 participantName.setEnabled(false);
 
                 mRecorder = new MediaRecorder();
@@ -175,12 +164,11 @@ public class MainActivity extends AppCompatActivity {
                 //Toast.makeText(getApplicationContext(), "Recording Started", Toast.LENGTH_LONG).show();
 
             } else if (isRecording) { //if not recording audio
-                great_b.setEnabled(false);
-                good_y.setEnabled(false);
-                notuseful_a.setEnabled(false);
-                knewit_x.setEnabled(false);
+                useful_b.setEnabled(false);
+                notuseful_x.setEnabled(false);
                 participantName.setEnabled(true);
                 mRecorder.stop();
+                mRecorder.reset();
                 mRecorder.release();
                 mRecorder = null;
                 isRecording = false;
@@ -196,28 +184,16 @@ public class MainActivity extends AppCompatActivity {
         String time = updateTime();
         String button_type = null;
         switch (v.getId()) {
-            case R.id.great_b:
+            case R.id.useful_b:
                 //Toast.makeText(MainActivity.this, "find button great_b clicked", Toast.LENGTH_SHORT).show();
                 soundPool.play(beep4, 1F, 1F, 1, 0, 1f);
-                button_type = "great_b";
+                button_type = "useful_b";
                 break;
 
-            case R.id.good_y:
-                //Toast.makeText(MainActivity.this, "find button good_y clicked", Toast.LENGTH_SHORT).show();
-                button_type = "good_y";
-                soundPool.play(beep3, 1F, 1F, 1, 0, 1f);
-                break;
-
-            case R.id.knewit_x:
+            case R.id.notuseful_x:
                 //Toast.makeText(MainActivity.this, "find button knewit_x clicked", Toast.LENGTH_SHORT).show();
-                soundPool.play(beep2, 1F, 1F, 1, 0, 1f);
-                button_type = "knewit_x";
-                break;
-
-            case R.id.notuseful_a:
-                //Toast.makeText(MainActivity.this, "find button notuseful_a clicked", Toast.LENGTH_SHORT).show();
                 soundPool.play(beep1, 1F, 1F, 1, 0, 1f);
-                button_type = "notuseful_a";
+                button_type = "notuseful_x";
                 break;
 
             default:
@@ -236,8 +212,7 @@ public class MainActivity extends AppCompatActivity {
             //outputWriter.println("Hi , How are you");
             outputWriter.flush();
             outputWriter.close();
-            Log.d(LOG_TAG, toprint);
-            outputWriter.close();
+            Log.d(LOG_TAG, "write message "+ toprint);
             Log.d(LOG_TAG, "file closed");
             //Toast.makeText(getApplicationContext(), "File saved successfully!", Toast.LENGTH_SHORT).show();
 
@@ -248,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Log.d(LOG_TAG,"\n\nFile written to");
+        Log.d(LOG_TAG,"\n\nFile written to"+mFileName);
 
     }
 
@@ -272,27 +247,15 @@ public class MainActivity extends AppCompatActivity {
             if ((event.getRepeatCount() == 0) & isRecording ){
                 switch (keyCode) {
                     case KEYCODE_BUTTON_B:
-                        Toast.makeText(MainActivity.this, "key down great_b clicked", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "key down useful_b clicked", Toast.LENGTH_SHORT).show();
                         soundPool.play(beep4, 1F, 1F, 1, 0, 1f);
-                        button_type = "great_b";
-                        return true;
-
-                    case KEYCODE_BUTTON_Y:
-                        Toast.makeText(MainActivity.this, "Key down good_y clicked", Toast.LENGTH_SHORT).show();
-                        button_type = "good_y";
-                        soundPool.play(beep3, 1F, 1F, 1, 0, 1f);
+                        button_type = "useful_b";
                         return true;
 
                     case KEYCODE_BUTTON_X:
-                        Toast.makeText(MainActivity.this, "Key Down knewit_x clicked", Toast.LENGTH_SHORT).show();
-                        soundPool.play(beep2, 1F, 1F, 1, 0, 1f);
-                        button_type = "knewit_x";
-                        return true;
-
-                    case KEYCODE_BUTTON_A:
-                        Toast.makeText(MainActivity.this, "Key Down notuseful_a clicked", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Key Down notuseful_x clicked", Toast.LENGTH_SHORT).show();
                         soundPool.play(beep1, 1F, 1F, 1, 0, 1f);
-                        button_type = "notuseful_a";
+                        button_type = "notuseful_x";
                         return true;
 
                 }
@@ -311,8 +274,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause(){
         super.onPause();
-        soundPool.release();
-        soundPool = null;
+        //soundPool.release();
+        //soundPool = null;
     }
 }
 
